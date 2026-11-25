@@ -4,6 +4,7 @@ import AppShell from './components/AppShell.jsx';
 import SplashPage from './pages/SplashPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import CreateAccountPage from './pages/CreateAccountPage.jsx';
+import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import VehiclePage from './pages/VehiclePage.jsx';
 import ServiceBookletPage from './pages/ServiceBookletPage.jsx';
@@ -21,6 +22,7 @@ export default function App() {
       <Route path="/" element={<SplashPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<CreateAccountPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
       <Route element={<RequireAuth area="staff" />}>
         <Route element={<StaffShell />}>

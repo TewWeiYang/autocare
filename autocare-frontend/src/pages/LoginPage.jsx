@@ -32,9 +32,11 @@ export default function LoginPage() {
   return (
     <AuthLayout title="Login">
       <h2 className="h2">Welcome Back!</h2>
+      {location.state?.notice && <div className="alert alert--good" role="status">{location.state.notice}</div>}
       <form className="stack" onSubmit={submit}>
         <Field label="Username" autoComplete="username" required value={form.username} onChange={set('username')} />
         <Field label="Password" type="password" autoComplete="current-password" required value={form.password} onChange={set('password')} />
+        <Link className="forgot" to="/forgot-password">Forgot password?</Link>
         {error && <div className="alert alert--bad" role="alert">{error}</div>}
         <button className="btn btn--primary" type="submit" disabled={busy}>{busy ? 'Logging in...' : 'Login'}</button>
       </form>
