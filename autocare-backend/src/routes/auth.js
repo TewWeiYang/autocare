@@ -32,7 +32,7 @@ router.post('/auth/login', limit, async (req, res) => {
   const [user] = await q('SELECT * FROM users WHERE LOWER(email) = ? OR LOWER(username) = ? LIMIT 1', [login, login]);
   const ok = await bcrypt.compare(pass, user?.password_hash ?? DUMMY_HASH);
   if (!user || !ok || !user.is_active) throw new HttpError(401, 'Incorrect username or password.');
-  res.json({ token: signToken(user.user_id), user: publicUser(user) });
+  res.json({ token: signToken(user), user: publicUser(user) });
 });
 
 router.post('/auth/register', limit, async (req, res) => {
@@ -61,5 +61,5 @@ router.post('/auth/register', limit, async (req, res) => {
     throw err;
   }
   const user = await userById(inserted.insertId);
-  res.status(201).json({ token: signToken(user.user_id), user: publicUser(user) });
+  res.status(201).json({ token: signToken(user), user: publicUser(user) });
 });

@@ -52,6 +52,8 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 10px 0; width: 100%; 
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .linkbtn { background: none; border: 0; padding: 0; color: var(--accent); font-weight: 600; font-size: 13px; }
 .linkbtn.danger { color: var(--bad); font-size: 14px; }
+.linkbtn:disabled { color: var(--muted); cursor: default; }
+.forgot { align-self: flex-end; margin-top: -4px; font-size: 13px; font-weight: 600; text-decoration: none; }
 .backlink { align-self: flex-start; display: inline-grid; place-items: center; width: 36px; height: 36px; margin: -6px 0 -4px -8px; border: 0; background: none; color: var(--ink); }
 .iconbtn { position: relative; width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); display: grid; place-items: center; }
 .badge { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--bad); color: #fff; font-size: 11px; font-weight: 600; display: grid; place-items: center; }

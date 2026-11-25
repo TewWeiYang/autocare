@@ -49,6 +49,7 @@ function load() {
 
 let db = load();
 let currentId = null;
+const pendingResets = {}; // email -> { code, expires, tries }, kept in memory only
 
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(db)); } catch { /* ignore */ }
@@ -81,6 +82,35 @@ export default {
     db.users.push(user);
     save();
     return wait({ token: `mock-${user.id}`, user: publicUser(user) });
+  },
+
+  // Forgot password. Sample data mode has no email, so the code is returned as "demoCode" and the
+  // screen shows it. The real backend never returns the code, it only emails it.
+  async requestPasswordReset(email) {
+    const key = String(email || '').trim().toLowerCase();
+    const user = db.users.find((u) => u.email.toLowerCase() === key);
+    let demoCode;
+    if (user) {
+      demoCode = String(Math.floor(100000 + Math.random() * 900000));
+      pendingResets[key] = { code: demoCode, expires: Date.now() + 10 * 60 * 1000, tries: 0 };
+    }
+    return wait({ message: 'If that email is registered, we have sent a 6-digit code. It works for 10 minutes.', demoCode });
+  },
+
+  async resetPassword({ email, otp, password }) {
+    const key = String(email || '').trim().toLowerCase();
+    if (!/^\d{6}$/.test(String(otp))) throw new Error('Enter the 6-digit code from your email.');
+    if (String(password).length < 8 || String(password).length > 72) throw new Error('Password needs 8 to 72 characters.');
+    const user = db.users.find((u) => u.email.toLowerCase() === key);
+    const pending = pendingResets[key];
+    const bad = new Error('That code is incorrect or has expired. Check your email, or request a new code.');
+    if (!user || !pending || pending.expires < Date.now() || pending.tries >= 5) throw bad;
+    pending.tries += 1;
+    if (pending.code !== String(otp)) throw bad;
+    user.password = password;
+    delete pendingResets[key];
+    save();
+    return wait({ message: 'Your password has been changed. Please log in with your new password.' });
   },
 
   async updateMe(patch) {

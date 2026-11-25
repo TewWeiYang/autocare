@@ -30,6 +30,8 @@ export default {
 
   login: (credentials) => request('/auth/login', { method: 'POST', body: credentials }), // -> { token, user }
   register: (data) => request('/auth/register', { method: 'POST', body: data }),         // -> { token, user }
+  requestPasswordReset: (email) => request('/auth/forgot-password', { method: 'POST', body: { email } }), // -> { message }
+  resetPassword: (data) => request('/auth/reset-password', { method: 'POST', body: data }),               // { email, otp, password } -> { message }
   updateMe: (patch) => request('/me', { method: 'PUT', body: patch }),                    // -> user
 
   getVehicle: () => request('/vehicle'),                                                  // -> vehicle | null

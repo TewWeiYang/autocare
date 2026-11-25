@@ -43,6 +43,8 @@ Errors should return a non-2xx status and JSON like `{ "message": "Incorrect use
 | --- | --- | --- | --- |
 | POST | `/auth/login` | `{ username, password }` | `{ token, user }` |
 | POST | `/auth/register` | `{ email, username, password, phone }` | `{ token, user }` |
+| POST | `/auth/forgot-password` | `{ email }` | `{ message }` (always the same answer, and emails a 6-digit code if the account exists) |
+| POST | `/auth/reset-password` | `{ email, otp, password }` | `{ message }` (400 with `{ message }` if the code is wrong or expired) |
 | PUT | `/me` | `{ username, email, phone }` | `user` |
 | GET | `/vehicle` | | `vehicle` or `null` |
 | PUT | `/vehicle` | `{ plateNumber, model, year, mileage, ownership }` | `vehicle` |
