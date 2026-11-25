@@ -11,6 +11,7 @@ const REQUIRED = {
   part_conditions: ['condition_id', 'vehicle_id', 'part_name', 'condition_status', 'last_service_mileage', 'last_service_date'],
   maintenance_rules: ['rule_id', 'service_category', 'interval_km', 'interval_months', 'part_name', 'monitor_at', 'replace_at'],
   notifications: ['notification_id', 'user_id', 'vehicle_id', 'title', 'message', 'notification_type', 'is_read', 'created_at'],
+  password_resets: ['reset_id', 'user_id', 'otp_hash', 'attempts', 'expires_at', 'used_at', 'created_at'],
 };
 
 function explain(err) {
@@ -21,6 +22,13 @@ function explain(err) {
   if (code === 'ER_BAD_DB_ERROR') return `The database "${config.db.database}" does not exist. Check DB_NAME.`;
   if (/ssl|tls|certificate/i.test(err.message)) return 'The secure connection failed. Keep DB_SSL=true for TiDB Cloud.';
   return '';
+}
+
+function emailStatus() {
+  const { brevoKey, smtp, from } = config.mail;
+  if (brevoKey) return `Brevo (HTTPS API), sender: ${from || 'MAIL_FROM is not set!'}`;
+  if (smtp.host) return `SMTP ${smtp.host}:${smtp.port}, sender: ${from || smtp.user || 'MAIL_FROM is not set!'}`;
+  return 'not set up. Password reset codes will be printed in the terminal where "npm start" runs (fine for testing).';
 }
 
 try {
@@ -43,8 +51,9 @@ try {
     console.log(`${missing.length ? 'NEEDS FIX    ' : 'ok           '} ${table.padEnd(18)} ${String(n).padStart(5)} rows${missing.length ? '   missing: ' + missing.join(', ') : ''}`);
     problems += missing.length ? 1 : 0;
   }
+  console.log(`\nEmail: ${emailStatus()}`);
   console.log(problems
-    ? '\nSome tables or columns are missing. Run sql/01-schema-additions.sql in the TiDB SQL Editor (skip lines that say "Duplicate"), then run this check again.'
+    ? '\nSome tables or columns are missing. Run sql/01-schema-additions.sql and sql/02-password-reset.sql in the TiDB SQL Editor (skip lines that say "Duplicate"), then run this check again.'
     : '\nAll good. You can run: npm run seed (demo data) and npm start.');
 } catch (err) {
   console.error(`\nCould not connect: ${err.code || ''} ${err.message}`);
